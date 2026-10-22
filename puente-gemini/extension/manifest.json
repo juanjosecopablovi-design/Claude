@@ -1,0 +1,57 @@
+{
+  "manifest_version": "0.3",
+  "name": "gemini",
+  "display_name": "Gemini",
+  "version": "1.0.0",
+  "description": "Consulta Gemini (API de Google) desde Claude Desktop y Cowork con tu propia clave.",
+  "long_description": "Añade dos herramientas: ask_gemini, que envía una pregunta a Gemini (con historial, instrucciones, búsqueda en Google con fuentes y archivos PDF, imágenes o texto), y list_gemini_models, que muestra los modelos disponibles para tu clave. La clave se guarda en el almacén seguro de Claude Desktop y solo se envía a generativelanguage.googleapis.com.",
+  "author": {
+    "name": "juanjosecopablovi-design"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "GEMINI_API_KEY": "${user_config.api_key}",
+        "GEMINI_MODEL": "${user_config.model}"
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "ask_gemini",
+      "description": "Envía una pregunta a Gemini y devuelve su respuesta, con fuentes si se activa la búsqueda en Google."
+    },
+    {
+      "name": "list_gemini_models",
+      "description": "Lista los modelos de Gemini disponibles para tu clave."
+    }
+  ],
+  "keywords": ["gemini", "google", "segunda opinión", "ia"],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": ["darwin", "win32"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "Clave de API de Gemini",
+      "description": "Créala en https://aistudio.google.com/apikey. Claude Desktop la guarda en el almacén seguro de tu equipo.",
+      "sensitive": true,
+      "required": true
+    },
+    "model": {
+      "type": "string",
+      "title": "Modelo por defecto",
+      "description": "ID del modelo que se usa si no eliges otro. Puedes cambiarlo en cualquier momento.",
+      "default": "gemini-3.1-pro-preview",
+      "required": false
+    }
+  }
+}

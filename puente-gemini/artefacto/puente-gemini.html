@@ -1,0 +1,938 @@
+<title>Puente Gemini</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: mesa de consulta de una sola pantalla. Riel de consultas a la izquierda,
+   expediente de la conversación al centro y redacción abajo. Gemini habla en azul acero,
+   la revisión de Claude en ocre, y las referencias por verificar en ámbar. */
+:root {
+  --bg: #f2f4f7;
+  --surface: #ffffff;
+  --rail: #e8ecf1;
+  --ink: #17202b;
+  --muted: #586374;
+  --line: #d4dbe4;
+  --gemini: #1d5a89;
+  --gemini-soft: #e2ecf5;
+  --claude: #855610;
+  --claude-soft: #f4eadb;
+  --ok: #2c7a4c;
+  --warn: #9a6200;
+  --warn-soft: #f8edd6;
+  --bad: #ad3434;
+  --bad-soft: #f7e3e3;
+  --focus: #2f6fb0;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-read: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10151c; --surface: #17202a; --rail: #131a22; --ink: #e4e9f0; --muted: #98a4b4; --line: #2a3542;
+    --gemini: #86b8e3; --gemini-soft: #1a2a3a; --claude: #dcaa60; --claude-soft: #2d2416;
+    --ok: #70c392; --warn: #e2ab4c; --warn-soft: #2d2412; --bad: #ea8585; --bad-soft: #321b1d; --focus: #86b8e3;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10151c; --surface: #17202a; --rail: #131a22; --ink: #e4e9f0; --muted: #98a4b4; --line: #2a3542;
+  --gemini: #86b8e3; --gemini-soft: #1a2a3a; --claude: #dcaa60; --claude-soft: #2d2416;
+  --ok: #70c392; --warn: #e2ab4c; --warn-soft: #2d2412; --bad: #ea8585; --bad-soft: #321b1d; --focus: #86b8e3;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+* { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+a { color: var(--gemini); }
+
+.app { display: grid; grid-template-columns: 272px minmax(0, 1fr); height: 100%; }
+
+/* ---------- Riel ---------- */
+.rail { background: var(--rail); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0;
+  padding-left: var(--gutter-l); padding-right: 12px; padding-block: 18px 14px; gap: 14px; }
+.brand { display: flex; flex-direction: column; gap: 2px; }
+.brand b { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.brand span { font-size: 12.5px; color: var(--muted); }
+.conv-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; margin-inline: -6px; }
+.conv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: baseline; text-align: left;
+  border: 0; background: transparent; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.conv:hover { background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.conv[aria-current="true"] { background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
+.conv .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.conv .d { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+.rail-empty { color: var(--muted); font-size: 13px; padding: 6px 4px; }
+.rail-foot { display: flex; flex-direction: column; gap: 6px; }
+
+/* ---------- Botones ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 6px; padding: 7px 12px;
+  border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 14px; font-weight: 500; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn:disabled { opacity: 0.55; cursor: default; }
+.btn.primary { background: var(--gemini); border-color: var(--gemini); color: var(--surface); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.quiet { border-color: transparent; background: transparent; color: var(--muted); padding-inline: 8px; }
+.btn.quiet:hover { color: var(--ink); background: color-mix(in srgb, var(--line) 45%, transparent); }
+.btn.danger { color: var(--bad); }
+.btn svg { width: 16px; height: 16px; flex: none; }
+
+/* ---------- Columna principal ---------- */
+.main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.bar, .thread-inner, .composer { padding-left: 24px; padding-right: var(--gutter-r); }
+.bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 12px; border-bottom: 1px solid var(--line); background: var(--bg); }
+.bar .title { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.only-narrow { display: none; }
+.pill { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 3px 10px 3px 8px; font-size: 12.5px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted); white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.pill[data-state="ready"] { color: var(--ok); } .pill[data-state="ready"]::before { background: var(--ok); }
+.pill[data-state="warn"] { color: var(--warn); } .pill[data-state="warn"]::before { background: var(--warn); }
+.pill[data-state="bad"] { color: var(--bad); } .pill[data-state="bad"]::before { background: var(--bad); }
+.pill[data-state="checking"]::before { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+.model-pick { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
+.model-pick select { font-family: var(--font-mono); font-size: 12.5px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); max-width: 230px; }
+
+.thread { flex: 1; min-height: 0; overflow-y: auto; }
+.thread-inner { max-width: 860px; margin-inline: auto; padding-block: 24px 32px; display: flex; flex-direction: column; gap: 22px; }
+
+/* Mensajes */
+.msg { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.who { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.who .meta { font-family: var(--font-mono); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.msg.user .body { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.user .docs-sent { font-size: 12.5px; color: var(--muted); }
+.msg.model .who { color: var(--gemini); }
+.answer { font-family: var(--font-read); font-size: 16.5px; line-height: 1.62; overflow-wrap: anywhere; min-width: 0; }
+.answer > :first-child { margin-top: 0; } .answer > :last-child { margin-bottom: 0; }
+.answer h1, .answer h2, .answer h3, .answer h4 { font-family: var(--font-ui); line-height: 1.3; text-wrap: balance; margin: 1.2em 0 0.4em; }
+.answer h1 { font-size: 1.2em; } .answer h2 { font-size: 1.1em; } .answer h3, .answer h4 { font-size: 1em; }
+.answer p, .answer ul, .answer ol, .answer blockquote { margin: 0 0 0.75em; }
+.answer ul, .answer ol { padding-left: 1.3em; }
+.answer li + li { margin-top: 0.25em; }
+.answer blockquote { border-left: 3px solid var(--line); padding-left: 12px; color: var(--muted); }
+.answer code { font-family: var(--font-mono); font-size: 0.86em; background: var(--gemini-soft); padding: 1px 4px; border-radius: 4px; }
+.answer pre { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; overflow-x: auto; }
+.answer pre code { background: none; padding: 0; }
+.answer .table-wrap { overflow-x: auto; margin: 0 0 0.75em; }
+.answer table { border-collapse: collapse; font-family: var(--font-ui); font-size: 14px; }
+.answer th, .answer td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; vertical-align: top; }
+.answer th { background: var(--gemini-soft); }
+
+.tools { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.chip-warn { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--warn); background: var(--warn-soft); border-radius: 999px; padding: 3px 10px; }
+details.cites { font-size: 13.5px; }
+details.cites summary { cursor: pointer; list-style: none; display: inline-flex; }
+details.cites summary::-webkit-details-marker { display: none; }
+details.cites ul { margin: 8px 0 0; padding-left: 1.2em; color: var(--muted); }
+details.cites li { font-family: var(--font-mono); font-size: 12.5px; }
+.sources { font-size: 13.5px; border-top: 1px solid var(--line); padding-top: 8px; }
+.sources b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.sources ol { margin: 4px 0 0; padding-left: 1.3em; }
+.sources a { overflow-wrap: anywhere; }
+
+.review { background: var(--claude-soft); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.review .who { color: var(--claude); }
+.review .answer { font-size: 15.5px; }
+
+.pending { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 14px; }
+.dots { display: inline-flex; gap: 4px; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--gemini); animation: pulse 1.2s ease-in-out infinite; }
+.dots i:nth-child(2) { animation-delay: 0.2s; } .dots i:nth-child(3) { animation-delay: 0.4s; }
+.claude-dots i { background: var(--claude); }
+.notice { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
+.notice.bad { border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); background: var(--bad-soft); }
+.notice.warn { border-color: color-mix(in srgb, var(--warn) 40%, var(--line)); background: var(--warn-soft); }
+.notice b { font-weight: 600; }
+.notice p { margin: 0; overflow-wrap: anywhere; }
+.notice .tools { margin-top: 2px; }
+
+/* Bienvenida y guía de conexión */
+.welcome { display: flex; flex-direction: column; gap: 18px; }
+.welcome h1 { font-family: var(--font-read); font-weight: 600; font-size: 28px; line-height: 1.2; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+.welcome .lead { color: var(--muted); margin: 0; max-width: 62ch; }
+.examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.examples .label { grid-column: 1 / -1; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.example { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 14px; line-height: 1.45; }
+.example:hover { border-color: var(--gemini); }
+.example small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.setup { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.setup h2 { font-size: 16px; margin: 0; }
+.setup ol { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+.setup code { font-family: var(--font-mono); font-size: 13px; background: var(--gemini-soft); padding: 1px 5px; border-radius: 4px; }
+.setup .why { color: var(--muted); font-size: 13.5px; margin: 0; }
+
+/* Redacción */
+.composer { border-top: 1px solid var(--line); background: var(--bg); padding-block: 12px 14px; }
+.composer-inner { max-width: 860px; margin-inline: auto; display: flex; flex-direction: column; gap: 8px; }
+.docs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); }
+.doc { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 2px 4px 2px 10px; color: var(--ink); }
+.doc .size { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+.doc button { border: 0; background: transparent; cursor: pointer; color: var(--muted); padding: 0 4px; font-size: 15px; line-height: 1; }
+textarea#prompt { width: 100%; resize: vertical; min-height: 76px; max-height: 40vh; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 10px 12px; line-height: 1.5; }
+textarea#prompt:focus { border-color: var(--gemini); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--gemini) 22%, transparent); }
+.composer-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.composer-row .spacer { flex: 1; }
+.check { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--muted); cursor: pointer; }
+.check input { accent-color: var(--gemini); width: 16px; height: 16px; }
+.file-btn { position: relative; overflow: hidden; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.hint { font-size: 12px; color: var(--muted); }
+
+/* Panel de ajustes */
+.sheet-backdrop { position: fixed; inset: 0; background: color-mix(in srgb, var(--ink) 35%, transparent); z-index: 20; }
+.sheet { position: fixed; z-index: 21; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--surface); border-left: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 16px; overflow-y: auto;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) var(--gutter-r) calc(18px + env(safe-area-inset-bottom, 0px)) 20px; }
+.sheet h2 { margin: 0; font-size: 17px; }
+.sheet .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-weight: 600; font-size: 13.5px; }
+.field p { margin: 0; color: var(--muted); font-size: 13px; }
+.field textarea { min-height: 170px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); line-height: 1.5; }
+.sheet .group { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 13px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; font-family: var(--font-mono); overflow-wrap: anywhere; }
+
+/* Pantallas estrechas: el riel pasa a ser un cajón */
+@media (max-width: 760px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: fixed; z-index: 21; top: 0; bottom: 0; left: 0; width: min(300px, 86vw); transform: translateX(-102%); transition: transform 0.2s ease;
+    padding-top: calc(18px + env(safe-area-inset-top, 0px)); padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+  .rail.open { transform: none; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--ink) 35%, transparent); }
+  .only-narrow { display: inline-flex; }
+  .bar, .thread-inner, .composer { padding-left: var(--gutter-l); }
+  .examples { grid-template-columns: minmax(0, 1fr); }
+  .model-pick select { max-width: 160px; }
+  .welcome h1 { font-size: 23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div class="app">
+  <aside class="rail" id="rail" aria-label="Consultas guardadas">
+    <div class="brand"><b>Puente Gemini</b><span>Tu Gemini dentro de Claude</span></div>
+    <button class="btn primary" id="btn-new" type="button">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>
+      Nueva consulta
+    </button>
+    <nav class="conv-list" id="conv-list"></nav>
+    <div class="rail-foot">
+      <button class="btn quiet" id="btn-settings" type="button">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2.5 4.5h7M12.5 4.5h1M2.5 11.5h1M6.5 11.5h7"/><circle cx="11" cy="4.5" r="1.6"/><circle cx="5" cy="11.5" r="1.6"/></svg>
+        Instrucciones y ajustes
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="bar">
+      <button class="btn quiet only-narrow" id="btn-rail" type="button" aria-label="Ver consultas" aria-controls="rail">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"/></svg>
+      </button>
+      <div class="title" id="conv-title">Nueva consulta</div>
+      <span class="pill" id="status" data-state="checking" role="status">Comprobando conexión…</span>
+      <label class="model-pick" for="model"><span>Modelo</span>
+        <select id="model"><option value="">Predeterminado de la extensión</option></select>
+      </label>
+    </header>
+
+    <section class="thread" id="thread" aria-live="polite">
+      <div class="thread-inner" id="thread-inner"></div>
+    </section>
+
+    <form class="composer" id="composer" autocomplete="off">
+      <div class="composer-inner">
+        <div class="docs" id="docs" hidden></div>
+        <textarea id="prompt" rows="3" aria-label="Consulta para Gemini" placeholder="Escribe tu consulta para Gemini. Enter envía; Mayús+Enter añade una línea."></textarea>
+        <div class="composer-row">
+          <label class="check" for="opt-search"><input type="checkbox" id="opt-search"> Buscar en Google y citar fuentes</label>
+          <span class="btn quiet file-btn" title="PDF, imágenes o texto, hasta unos 500 KB en total">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M10.5 4.5 5.8 9.2a1.3 1.3 0 0 0 1.9 1.9l5-5a2.6 2.6 0 0 0-3.7-3.7l-5 5a3.9 3.9 0 0 0 5.5 5.5l4.2-4.2"/></svg>
+            Adjuntar
+            <input type="file" id="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.txt,.md,.csv,.json,.html,.htm,.xml" aria-label="Adjuntar archivos">
+          </span>
+          <span class="spacer"></span>
+          <button class="btn quiet" id="btn-cancel" type="button" hidden>Cancelar</button>
+          <button class="btn primary" id="btn-send" type="submit">Enviar a Gemini</button>
+        </div>
+      </div>
+    </form>
+  </main>
+</div>
+
+<div class="sheet-backdrop" id="sheet-backdrop" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-label="Instrucciones y ajustes">
+  <div class="row"><h2>Instrucciones y ajustes</h2><button class="btn quiet" id="btn-close-sheet" type="button">Cerrar</button></div>
+  <div class="field">
+    <label for="system">Instrucciones para Gemini</label>
+    <p>Se envían con cada consulta, como instrucciones de sistema.</p>
+    <textarea id="system"></textarea>
+    <div class="tools"><button class="btn quiet" id="btn-reset-system" type="button">Restablecer las instrucciones sugeridas</button></div>
+  </div>
+  <div class="group">
+    <b>Conexión</b>
+    <dl class="kv" id="conn-info"></dl>
+    <div class="tools">
+      <button class="btn" id="btn-test" type="button">Probar conexión</button>
+      <button class="btn quiet" id="btn-perms" type="button">Permisos de esta página</button>
+    </div>
+  </div>
+  <div class="group">
+    <b>Esta consulta</b>
+    <p class="hint">Las consultas se guardan solo en este navegador. Los adjuntos no se guardan: vuelve a adjuntarlos si recargas la página.</p>
+    <div class="tools">
+      <button class="btn danger" id="btn-delete" type="button">Eliminar esta consulta</button>
+    </div>
+  </div>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const STORE_KEY = "puente-gemini.v1";
+  const SERVER_CANDIDATES = ["host:gemini", "host:Gemini"];
+  const MAX_ATTACH_B64 = 700000;   // la llamada a la extensión admite ~1 MiB en total
+  const MAX_INPUT_BYTES = 950000;
+  const DEFAULT_SYSTEM =
+    "Responde en español, con lenguaje claro y preciso. Cuando cites normas, sentencias o doctrina, " +
+    "indica la fuente exacta (número, año y corporación o entidad) y advierte si no puedes confirmar que esté vigente. " +
+    "No inventes jurisprudencia ni citas normativas: si no estás seguro de una referencia, dilo expresamente.";
+  const EXAMPLES = [
+    { text: "Resume en cinco puntos las obligaciones del contratista en el documento adjunto y señala los plazos.", note: "Adjunta el contrato en PDF" },
+    { text: "Explica la diferencia entre contratación directa y mínima cuantía en Colombia e indica qué norma regula cada una.", note: "Activa la búsqueda en Google para ver fuentes" },
+    { text: "Revisa esta cláusula de penalidades y señala ambigüedades de redacción:\n\n", note: "Pega la cláusula después de los dos puntos" },
+    { text: "Traduce al inglés jurídico el siguiente párrafo, manteniendo los términos técnicos:\n\n", note: "Pega el párrafo" },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const el = {
+    rail: $("rail"), convList: $("conv-list"), title: $("conv-title"), status: $("status"), model: $("model"),
+    thread: $("thread"), inner: $("thread-inner"), form: $("composer"), prompt: $("prompt"), search: $("opt-search"),
+    file: $("file"), docs: $("docs"), send: $("btn-send"), cancel: $("btn-cancel"),
+    sheet: $("sheet"), backdrop: $("sheet-backdrop"), system: $("system"), connInfo: $("conn-info"),
+  };
+
+  // ---------- Estado ----------
+  const state = {
+    convs: [], activeId: null,
+    settings: { system: DEFAULT_SYSTEM, model: "", search: false, server: "" },
+    docs: new Map(),          // id de consulta → adjuntos en memoria
+    conn: { phase: "checking", server: "", defaultModel: "", models: [], message: "" },
+    busy: null,               // { convId, controller }
+    reviewing: new Map(),     // id de mensaje → AbortController
+    deleteArmed: false,
+  };
+  let mcp = null, perms = null, sample = null;
+
+  function load() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (saved && Array.isArray(saved.convs)) {
+        state.convs = saved.convs;
+        state.activeId = saved.activeId;
+        Object.assign(state.settings, saved.settings || {});
+      }
+    } catch { /* sin almacenamiento: la página funciona igual */ }
+    if (!state.convs.some((c) => c.id === state.activeId)) state.activeId = state.convs[0]?.id || null;
+    // Una revisión que quedó a medias al recargar no puede continuar.
+    for (const c of state.convs) for (const m of c.messages) {
+      if (m.review && (m.review.status === "thinking" || m.review.status === "streaming")) m.review = { ...m.review, status: "error", note: "La revisión se interrumpió." };
+    }
+  }
+  function save() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ convs: state.convs, activeId: state.activeId, settings: state.settings }));
+    } catch { /* lleno o bloqueado */ }
+  }
+  const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  const active = () => state.convs.find((c) => c.id === state.activeId) || null;
+  function ensureConv() {
+    let conv = active();
+    if (!conv) {
+      conv = { id: uid(), title: "Nueva consulta", created: Date.now(), updated: Date.now(), messages: [] };
+      state.convs.unshift(conv);
+      state.activeId = conv.id;
+    }
+    return conv;
+  }
+
+  // ---------- Utilidades ----------
+  function h(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === "class") node.className = v;
+      else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v === true ? "" : v);
+    }
+    for (const c of children.flat()) if (c != null && c !== false) node.append(c.nodeType ? c : document.createTextNode(String(c)));
+    return node;
+  }
+  function renderMarkdown(text) {
+    const box = h("div", { class: "answer" });
+    if (window.marked && window.DOMPurify) {
+      box.innerHTML = DOMPurify.sanitize(marked.parse(text, { gfm: true, breaks: false }));
+      for (const a of box.querySelectorAll("a")) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+      for (const t of box.querySelectorAll("table")) { const wrap = h("div", { class: "table-wrap" }); t.replaceWith(wrap); wrap.append(t); }
+    } else {
+      box.style.whiteSpace = "pre-wrap";
+      box.textContent = text;
+    }
+    return box;
+  }
+  const fmtDate = (ts) => new Date(ts).toLocaleDateString("es-CO", { day: "numeric", month: "short" });
+  const fmtNum = (n) => (typeof n === "number" ? n.toLocaleString("es-CO") : "");
+  const fmtSize = (bytes) => (bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1048576).toFixed(1)} MB`);
+
+  // Referencias que conviene verificar antes de usarlas (sentencias, normas, radicados).
+  const CITE_PATTERNS = [
+    /\b(?:SU|T|C|A)-\d{1,4}(?:\s*(?:de\s+|\/)\s*\d{2,4})?\b/g,
+    /\b(?:Ley|Decreto(?:[- ]Ley)?|Resoluci[oó]n|Acuerdo|Circular(?:\s+Externa)?)\s+(?:No\.?\s*)?\d{1,5}(?:\s+de\s+\d{4})?/gi,
+    /\b(?:radicad[oa]|rad\.)\s*(?:No\.?\s*)?\d[\d-]{7,}/gi,
+  ];
+  function findCitations(text) {
+    const found = new Map();
+    for (const re of CITE_PATTERNS) for (const m of text.matchAll(re)) {
+      const key = m[0].replace(/\s+/g, " ").trim();
+      if (!found.has(key.toLowerCase())) found.set(key.toLowerCase(), key);
+    }
+    return [...found.values()].slice(0, 30);
+  }
+
+  async function copyText(text, button) {
+    const label = button.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = "Copiado";
+    } catch {
+      button.textContent = "Selecciona y copia el texto";
+      const answer = button.closest(".msg")?.querySelector(".answer");
+      if (answer) { const r = document.createRange(); r.selectNodeContents(answer); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    }
+    setTimeout(() => { button.textContent = label; }, 1800);
+  }
+
+  // ---------- Conexión con la extensión ----------
+  function setConn(patch) {
+    Object.assign(state.conn, patch);
+    const { phase } = state.conn;
+    const copy = {
+      checking: ["checking", "Comprobando conexión…"],
+      idle: ["warn", "Sin conectar"],
+      outside: ["bad", "Fuera de la app de Claude"],
+      missing: ["bad", "Extensión no encontrada"],
+      key: ["bad", "Revisa la clave de Gemini"],
+      denied: ["bad", "Acceso bloqueado"],
+      error: ["warn", "Conexión con avisos"],
+      ready: ["ready", "Conectado"],
+    }[phase] || ["warn", phase];
+    el.status.dataset.state = copy[0];
+    el.status.textContent = copy[1];
+    el.status.title = state.conn.message || "";
+    renderModels();
+    renderConnInfo();
+    renderThread();
+  }
+
+  function errorText(err) {
+    const blocks = err?.result?.content;
+    const text = Array.isArray(blocks) ? blocks.find((b) => b?.type === "text")?.text : "";
+    return text || err?.message || "Sin detalle.";
+  }
+
+  async function tryServer(server) {
+    const res = await mcp.callTool(server, "list_gemini_models", {}, { cache: false });
+    const payload = res.payload && typeof res.payload === "object" ? res.payload : {};
+    return { defaultModel: payload.default_model || "", models: Array.isArray(payload.models) ? payload.models : [] };
+  }
+
+  // Prueba los nombres posibles de la extensión; solo se llama tras un clic o si ya hay permiso.
+  async function connect() {
+    if (!mcp) return setConn({ phase: "outside" });
+    setConn({ phase: "checking", message: "" });
+    const order = [state.settings.server, ...SERVER_CANDIDATES].filter((s, i, a) => s && a.indexOf(s) === i);
+    let lastErr = null;
+    for (const server of order) {
+      try {
+        const info = await tryServer(server);
+        state.settings.server = server; save();
+        return setConn({ phase: "ready", server, ...info, message: "" });
+      } catch (err) {
+        lastErr = err;
+        if (err?.code === "server_not_connected" || err?.code === "server_not_found") continue;
+        if (err?.code === "tool_error") return setConn({ phase: "key", server, message: errorText(err) });
+        if (err?.code === "not_in_manifest") return setConn({ phase: "denied", server, message: "Desactivaste el acceso de esta página a la extensión." });
+        if (err?.code === "cancelled") return setConn({ phase: "idle", message: "Rechazaste la conexión en la ventana de confirmación." });
+        if (["not_granted", "capability_disabled", "capability_removed"].includes(err?.code)) return setConn({ phase: "outside" });
+        return setConn({ phase: "error", server, message: errorText(err) });
+      }
+    }
+    setConn({ phase: "missing", server: "", message: lastErr ? errorText(lastErr) : "" });
+  }
+
+  async function boot() {
+    const claudeApi = window.claude;
+    if (!claudeApi?.use) return setConn({ phase: "outside" });
+    [mcp, perms, sample] = await Promise.all([
+      claudeApi.use("mcp").catch(() => null),
+      claudeApi.use("permissions").catch(() => null),
+      claudeApi.use("sample").catch(() => null),
+    ]);
+    renderThread();
+    if (!mcp) return setConn({ phase: "outside" });
+    // Con permiso ya concedido se conecta solo; si no, espera al botón para no pedir permisos al cargar.
+    const order = [state.settings.server, ...SERVER_CANDIDATES].filter((s, i, a) => s && a.indexOf(s) === i);
+    let granted = false;
+    if (perms) {
+      for (const s of order) {
+        const st = await perms.state("mcp:" + s).catch(() => "unavailable");
+        if (st === "granted") { granted = true; break; }
+      }
+    }
+    if (granted) return connect();
+    setConn({ phase: "idle" });
+  }
+
+  // ---------- Envío a Gemini ----------
+  function historyFor(conv, upto) {
+    // Se omiten las preguntas que fallaron (las sigue un aviso de error) y los avisos mismos.
+    return conv.messages.slice(0, upto)
+      .filter((m, i, all) => (m.role === "model" || (m.role === "user" && all[i + 1]?.role !== "error")) && m.text)
+      .map((m) => ({ role: m.role, text: m.text }));
+  }
+
+  function buildInput(conv, userIndex) {
+    const userMsg = conv.messages[userIndex];
+    const docs = state.docs.get(conv.id) || [];
+    const input = {
+      prompt: userMsg.text,
+      history: historyFor(conv, userIndex),
+      system: state.settings.system || "",
+      google_search: !!userMsg.search,
+    };
+    if (state.settings.model) input.model = state.settings.model;
+    if (docs.length) input.attachments = docs.map((d) => ({ name: d.name, mime_type: d.mime, data_base64: d.data }));
+    // Si la conversación crece demasiado, se envían solo los turnos más recientes.
+    while (input.history.length && new Blob([JSON.stringify(input)]).size > MAX_INPUT_BYTES) input.history.splice(0, 2);
+    return input;
+  }
+
+  async function ask(conv, userIndex) {
+    if (state.busy) return;
+    if (state.conn.phase !== "ready") {
+      await connect();
+      if (state.conn.phase !== "ready") {
+        conv.messages.splice(userIndex + 1, 0, { id: uid(), role: "error", code: state.conn.phase, text: state.conn.message });
+        save(); renderThread(); return;
+      }
+    }
+    const controller = new AbortController();
+    state.busy = { convId: conv.id, controller, started: Date.now() };
+    renderBusy(); renderThread();
+    try {
+      const res = await mcp.callTool(state.conn.server, "ask_gemini", buildInput(conv, userIndex), { cache: false, signal: controller.signal });
+      const p = res.payload && typeof res.payload === "object" ? res.payload : null;
+      const text = p?.text || res.content?.find((b) => b.type === "text")?.text || "";
+      conv.messages.splice(userIndex + 1, 0, {
+        id: uid(), role: "model", text, at: Date.now(),
+        model: p?.model || "", finish: p?.finish_reason || "", sources: p?.sources || [], usage: p?.usage || null,
+      });
+    } catch (err) {
+      const code = controller.signal.aborted ? "user_cancelled" : err?.code || "upstream_error";
+      conv.messages.splice(userIndex + 1, 0, { id: uid(), role: "error", code, text: errorText(err) });
+      if (code === "server_not_connected") setConn({ phase: "missing", message: errorText(err) });
+      if (code === "not_in_manifest") setConn({ phase: "denied" });
+    } finally {
+      state.busy = null;
+      conv.updated = Date.now();
+      save(); renderBusy(); renderAll();
+    }
+  }
+
+  function submit() {
+    const text = el.prompt.value.trim();
+    if (!text || state.busy) return;
+    const conv = ensureConv();
+    if (!conv.messages.some((m) => m.role === "user")) conv.title = text.replace(/\s+/g, " ").slice(0, 70);
+    const docs = state.docs.get(conv.id) || [];
+    conv.messages.push({ id: uid(), role: "user", text, search: el.search.checked, docs: docs.map((d) => d.name), at: Date.now() });
+    el.prompt.value = "";
+    try { sessionStorage.removeItem(STORE_KEY + ".draft"); } catch { /* sin almacenamiento */ }
+    save(); renderAll();
+    ask(conv, conv.messages.length - 1);
+  }
+
+  function retry(conv, errorId) {
+    const i = conv.messages.findIndex((m) => m.id === errorId);
+    if (i < 1) return;
+    conv.messages.splice(i, 1);
+    save();
+    ask(conv, i - 1);
+  }
+
+  // ---------- Revisión con Claude ----------
+  async function review(conv, msg) {
+    if (!sample || state.reviewing.has(msg.id)) return;
+    const i = conv.messages.indexOf(msg);
+    const question = conv.messages.slice(0, i).reverse().find((m) => m.role === "user")?.text || "";
+    const prompt =
+      "Actúa como revisor crítico. Abajo están una consulta y la respuesta que dio otro modelo de IA (Gemini). " +
+      "Revisa la respuesta y entrega, en español y en no más de 250 palabras:\n" +
+      "1. Afirmaciones que podrían ser incorrectas o imprecisas, y por qué.\n" +
+      "2. Citas de normas, sentencias o doctrina que deben verificarse en fuentes oficiales antes de usarse. " +
+      "No afirmes que una cita es correcta o está vigente si no puedes confirmarlo, y no propongas citas nuevas.\n" +
+      "3. Lo que falta o convendría precisar.\n" +
+      "Si la respuesta te parece sólida, dilo en una frase.\n\n" +
+      `<consulta>\n${question.slice(0, 20000)}\n</consulta>\n\n<respuesta_gemini>\n${msg.text.slice(0, 60000)}\n</respuesta_gemini>`;
+    const controller = new AbortController();
+    state.reviewing.set(msg.id, controller);
+    msg.review = { text: "", status: "thinking" };
+    renderThread();
+    try {
+      const { text, truncated } = await sample(prompt, {
+        signal: controller.signal,
+        onText: ({ text }) => { msg.review = { text, status: "streaming" }; updateReview(msg); },
+      });
+      msg.review = { text, status: truncated ? "truncated" : "done" };
+    } catch (err) {
+      const kept = err?.text || "";
+      const copy = {
+        cancelled: "Detuviste la revisión.",
+        not_granted: "No se permitió que esta página use Claude. Puedes activarlo en Permisos de esta página.",
+        sampling_disabled: "Claude no está disponible para esta cuenta.",
+        rate_limited: "Llegaste al límite de uso de Claude por ahora. Inténtalo más tarde.",
+        session_expired: "Tu sesión de Claude expiró. Vuelve a iniciar sesión.",
+        refused: "Claude no pudo revisar esta respuesta.",
+        prompt_too_large: "La respuesta es demasiado larga para revisarla completa.",
+      }[err?.code] || "No se pudo completar la revisión. Inténtalo de nuevo.";
+      msg.review = err?.code === "refused" ? { text: "", status: "error", note: copy } : { text: kept, status: "error", note: copy };
+      if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].includes(err?.code)) sample = null;
+    } finally {
+      state.reviewing.delete(msg.id);
+      save(); renderThread();
+    }
+  }
+
+  // ---------- Adjuntos ----------
+  function mimeFor(file) {
+    if (file.type) return file.type;
+    const ext = file.name.toLowerCase().split(".").pop();
+    return { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", md: "text/markdown",
+      txt: "text/plain", csv: "text/csv", json: "application/json", html: "text/html", htm: "text/html", xml: "application/xml" }[ext] || "";
+  }
+  function readBase64(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result).split(",")[1] || "");
+      r.onerror = () => reject(r.error);
+      r.readAsDataURL(file);
+    });
+  }
+  async function addFiles(files) {
+    const conv = ensureConv();
+    const list = state.docs.get(conv.id) || [];
+    let total = list.reduce((n, d) => n + d.data.length, 0);
+    const rejected = [];
+    for (const file of files) {
+      const mime = mimeFor(file);
+      if (!mime) { rejected.push(`${file.name}: formato no admitido`); continue; }
+      const data = await readBase64(file).catch(() => "");
+      if (!data) { rejected.push(`${file.name}: no se pudo leer`); continue; }
+      if (total + data.length > MAX_ATTACH_B64) { rejected.push(`${file.name}: supera el límite de unos 500 KB por consulta`); continue; }
+      total += data.length;
+      list.push({ id: uid(), name: file.name, mime, size: file.size, data });
+    }
+    state.docs.set(conv.id, list);
+    save(); renderAll();
+    if (rejected.length) {
+      conv.messages.push({ id: uid(), role: "note", text: rejected.join("\n") +
+        "\n\nPara documentos grandes, escribe en un chat de Cowork: «Pregúntale a Gemini sobre el archivo …» con la ruta del archivo; la extensión lo lee directamente de tu equipo." });
+      save(); renderThread();
+    }
+  }
+
+  // ---------- Render ----------
+  function renderAll() { renderRail(); renderThread(); renderDocs(); el.title.textContent = active()?.title || "Nueva consulta"; }
+
+  function renderRail() {
+    el.convList.replaceChildren();
+    if (!state.convs.length) { el.convList.append(h("div", { class: "rail-empty" }, "Tus consultas aparecerán aquí.")); return; }
+    for (const c of [...state.convs].sort((a, b) => b.updated - a.updated)) {
+      el.convList.append(h("button", {
+        class: "conv", type: "button", "aria-current": c.id === state.activeId ? "true" : "false",
+        onclick: () => { state.activeId = c.id; state.deleteArmed = false; save(); renderAll(); el.rail.classList.remove("open"); },
+      }, h("span", { class: "t" }, c.title || "Consulta"), h("span", { class: "d" }, fmtDate(c.updated))));
+    }
+  }
+
+  function renderModels() {
+    const { models, defaultModel } = state.conn;
+    const current = state.settings.model;
+    el.model.replaceChildren(h("option", { value: "" }, defaultModel ? `Predeterminado (${defaultModel})` : "Predeterminado de la extensión"));
+    const ids = models.map((m) => m.id);
+    if (current && !ids.includes(current)) ids.unshift(current);
+    for (const id of ids) {
+      const m = models.find((x) => x.id === id);
+      el.model.append(h("option", { value: id }, m && m.display_name !== id ? `${m.display_name} · ${id}` : id));
+    }
+    el.model.value = current;
+  }
+
+  function renderConnInfo() {
+    const c = state.conn;
+    el.connInfo.replaceChildren(
+      h("dt", {}, "Estado"), h("dd", {}, el.status.textContent),
+      h("dt", {}, "Extensión"), h("dd", {}, c.server || "—"),
+      h("dt", {}, "Modelo"), h("dd", {}, state.settings.model || c.defaultModel || "—"),
+      h("dt", {}, "Modelos"), h("dd", {}, c.models.length ? String(c.models.length) : "—"),
+    );
+    if (c.message) el.connInfo.append(h("dt", {}, "Detalle"), h("dd", {}, c.message));
+  }
+
+  function renderDocs() {
+    const conv = active();
+    const docs = (conv && state.docs.get(conv.id)) || [];
+    el.docs.hidden = !docs.length;
+    el.docs.replaceChildren();
+    if (!docs.length) return;
+    el.docs.append(h("span", {}, "Se envían con cada pregunta:"));
+    for (const d of docs) {
+      el.docs.append(h("span", { class: "doc" }, d.name, h("span", { class: "size" }, fmtSize(d.size)),
+        h("button", { type: "button", "aria-label": `Quitar ${d.name}`, onclick: () => {
+          state.docs.set(conv.id, docs.filter((x) => x.id !== d.id)); renderDocs();
+        } }, "×")));
+    }
+  }
+
+  function setupCard() {
+    const phase = state.conn.phase;
+    const lead = {
+      outside: "Esta página solo llega a Gemini cuando la abres dentro de la app de escritorio de Claude (por ejemplo, desde Cowork).",
+      missing: "No encuentro la extensión Gemini en esta app de Claude. Instálala y actívala con estos pasos:",
+      key: "La extensión responde, pero Google rechazó la consulta:",
+      denied: "Bloqueaste el acceso de esta página a la extensión Gemini. Actívalo de nuevo en los permisos de la página.",
+      error: "La extensión respondió con un problema:",
+      idle: "Conecta esta página con la extensión Gemini de Claude Desktop. La primera vez, la app te pedirá permiso.",
+      checking: "Comprobando la extensión Gemini…",
+    }[phase];
+    if (!lead || phase === "ready") return null;
+    const actions = h("div", { class: "tools" });
+    if (phase === "denied") actions.append(h("button", { class: "btn primary", type: "button", onclick: openPerms }, "Abrir permisos"));
+    else if (phase !== "checking" && phase !== "outside") actions.append(h("button", { class: "btn primary", type: "button", onclick: connect }, phase === "idle" ? "Conectar con Gemini" : "Probar de nuevo"));
+    return h("div", { class: "setup" },
+      h("h2", {}, phase === "idle" ? "Conectar con tu Gemini" : "Falta un paso para hablar con Gemini"),
+      h("p", { class: "why" }, lead),
+      state.conn.message ? h("p", {}, state.conn.message) : null,
+      phase === "idle" || phase === "checking" || phase === "denied" ? null : h("ol", {},
+        h("li", {}, "Crea una clave de API en ", h("a", { href: "https://aistudio.google.com/apikey", target: "_blank", rel: "noopener" }, "Google AI Studio"), ". La suscripción Google AI Pro no incluye la API: el uso de la API se cobra y se limita aparte."),
+        h("li", {}, "Instala el archivo ", h("code", {}, "gemini.mcpb"), " en Claude Desktop: Configuración → Extensiones → Instalar extensión. Pega tu clave cuando te la pida."),
+        h("li", {}, "Abre este artefacto desde la app de escritorio de Claude y pulsa ", h("b", {}, "Probar de nuevo"), "."),
+      ),
+      actions,
+    );
+  }
+
+  function renderWelcome() {
+    const examples = h("div", { class: "examples" }, h("div", { class: "label" }, "Ejemplos para empezar"));
+    for (const ex of EXAMPLES) {
+      examples.append(h("button", { class: "example", type: "button", onclick: () => {
+        el.prompt.value = ex.text; el.prompt.focus(); el.prompt.setSelectionRange(ex.text.length, ex.text.length);
+        if (/búsqueda/.test(ex.note)) el.search.checked = true;
+      } }, ex.text.trim(), h("small", {}, ex.note)));
+    }
+    return h("div", { class: "welcome" },
+      h("h1", {}, "Consulta a Gemini sin salir de Claude"),
+      h("p", { class: "lead" }, "Cada respuesta llega con su modelo, sus fuentes si activas la búsqueda y un aviso de las sentencias o normas que cita, para que las verifiques. Con un clic puedes pedirle a Claude que revise lo que dijo Gemini."),
+      setupCard(),
+      examples,
+    );
+  }
+
+  function errorNotice(conv, m) {
+    const copy = {
+      tool_error: ["Gemini no pudo responder", m.text],
+      user_cancelled: ["Cancelaste la consulta", "Puedes enviarla otra vez cuando quieras."],
+      cancelled: ["La consulta no se envió", "Se rechazó en la ventana de confirmación de la app."],
+      server_not_connected: ["No encuentro la extensión Gemini", "Abre esta página en la app de escritorio de Claude y verifica que la extensión esté activada en Configuración → Extensiones."],
+      missing: ["No encuentro la extensión Gemini", "Abre esta página en la app de escritorio de Claude y verifica que la extensión esté activada en Configuración → Extensiones."],
+      outside: ["Fuera de la app de Claude", "Abre esta página en la app de escritorio de Claude para consultar a Gemini."],
+      not_in_manifest: ["Acceso bloqueado", "Desactivaste el acceso de esta página a la extensión. Actívalo en los permisos de la página."],
+      denied: ["Acceso bloqueado", "Desactivaste el acceso de esta página a la extensión. Actívalo en los permisos de la página."],
+      server_unavailable: ["La extensión no respondió a tiempo", "Gemini puede tardar con preguntas largas o con búsqueda. Inténtalo de nuevo."],
+      approval_required: ["Falta tu aprobación", "La app necesita que apruebes el uso de la extensión. Reintenta y acepta la ventana de confirmación."],
+      blocked_by_policy: ["Bloqueado por tu organización", "La política de tu organización no permite esta herramienta."],
+      key: ["Revisa la clave de Gemini", m.text],
+      idle: ["Sin conectar", "Pulsa «Conectar con Gemini» y acepta el permiso."],
+    }[m.code] || ["No se pudo completar la consulta", m.text || `Código: ${m.code}`];
+    const actions = h("div", { class: "tools" });
+    if (!["blocked_by_policy", "outside"].includes(m.code)) actions.append(h("button", { class: "btn", type: "button", disabled: !!state.busy, onclick: () => retry(conv, m.id) }, "Reintentar"));
+    if (["not_in_manifest", "denied"].includes(m.code)) actions.append(h("button", { class: "btn quiet", type: "button", onclick: openPerms }, "Abrir permisos"));
+    return h("div", { class: `notice ${m.code === "user_cancelled" ? "warn" : "bad"}` }, h("b", {}, copy[0]), h("p", {}, copy[1]), actions);
+  }
+
+  function reviewBlock(conv, m) {
+    const r = m.review;
+    const box = h("div", { class: "review", "data-review": m.id });
+    const running = state.reviewing.has(m.id);
+    box.append(h("div", { class: "who" }, "Revisión de Claude", running ? h("button", { class: "btn quiet", type: "button", onclick: () => state.reviewing.get(m.id)?.abort() }, "Detener") : null));
+    if (!r.text && running) box.append(h("div", { class: "pending" }, h("span", { class: "dots claude-dots" }, h("i"), h("i"), h("i")), "Claude está leyendo la respuesta…"));
+    if (r.text) box.append(renderMarkdown(r.text));
+    if (r.status === "truncated") box.append(h("p", { class: "hint" }, "La revisión se cortó por longitud."));
+    if (r.note) box.append(h("p", { class: "hint" }, r.note));
+    if (!running && r.status === "error" && sample) box.append(h("div", { class: "tools" }, h("button", { class: "btn quiet", type: "button", onclick: () => review(conv, m) }, "Reintentar la revisión")));
+    return box;
+  }
+  function updateReview(m) {
+    const old = el.inner.querySelector(`[data-review="${m.id}"]`);
+    const conv = active();
+    if (old && conv) old.replaceWith(reviewBlock(conv, m));
+  }
+
+  function modelMessage(conv, m) {
+    const meta = [m.model, m.usage?.total_tokens ? `${fmtNum(m.usage.total_tokens)} tokens` : ""].filter(Boolean).join(" · ");
+    const cites = findCitations(m.text);
+    const tools = h("div", { class: "tools" });
+    const copyBtn = h("button", { class: "btn quiet", type: "button" }, "Copiar");
+    copyBtn.addEventListener("click", () => copyText(m.text, copyBtn));
+    tools.append(copyBtn);
+    if (sample && !m.review) tools.append(h("button", { class: "btn quiet", type: "button", onclick: () => review(conv, m) }, "Contrastar con Claude"));
+    const node = h("article", { class: "msg model" },
+      h("div", { class: "who" }, "Gemini", meta ? h("span", { class: "meta" }, meta) : null),
+      renderMarkdown(m.text),
+      m.finish === "MAX_TOKENS" ? h("p", { class: "hint" }, "La respuesta se cortó por el límite de longitud.") : null,
+    );
+    if (cites.length) {
+      node.append(h("details", { class: "cites" },
+        h("summary", {}, h("span", { class: "chip-warn" }, `${cites.length} ${cites.length === 1 ? "referencia" : "referencias"} por verificar`)),
+        h("ul", {}, cites.map((c) => h("li", {}, c))),
+      ));
+    }
+    if (m.sources?.length) {
+      node.append(h("div", { class: "sources" }, h("b", {}, "Fuentes de la búsqueda"),
+        h("ol", {}, m.sources.map((s) => h("li", {}, h("a", { href: s.uri, target: "_blank", rel: "noopener noreferrer" }, s.title || s.uri))))));
+    }
+    node.append(tools);
+    if (m.review) node.append(reviewBlock(conv, m));
+    return node;
+  }
+
+  function renderThread() {
+    const conv = active();
+    const atBottom = el.thread.scrollHeight - el.thread.scrollTop - el.thread.clientHeight < 80;
+    el.inner.replaceChildren();
+    if (!conv || !conv.messages.length) {
+      el.inner.append(renderWelcome());
+      return;
+    }
+    const card = state.conn.phase !== "ready" && state.conn.phase !== "checking" && state.conn.phase !== "idle" ? setupCard() : null;
+    if (card) el.inner.append(card);
+    for (const m of conv.messages) {
+      if (m.role === "user") {
+        el.inner.append(h("article", { class: "msg user" },
+          h("div", { class: "who" }, "Tú", m.search ? h("span", { class: "meta" }, "con búsqueda en Google") : null),
+          h("div", { class: "body" }, m.text),
+          m.docs?.length ? h("div", { class: "docs-sent" }, `Adjuntos: ${m.docs.join(", ")}`) : null,
+        ));
+      } else if (m.role === "model") el.inner.append(modelMessage(conv, m));
+      else if (m.role === "error") el.inner.append(errorNotice(conv, m));
+      else if (m.role === "note") el.inner.append(h("div", { class: "notice warn" }, h("b", {}, "Algunos archivos no se adjuntaron"), h("p", { style: "white-space: pre-wrap" }, m.text)));
+    }
+    if (state.busy?.convId === conv.id) {
+      el.inner.append(h("div", { class: "pending", id: "pending" }, h("span", { class: "dots" }, h("i"), h("i"), h("i")), h("span", { id: "pending-text" }, "Gemini está respondiendo…")));
+    }
+    if (atBottom || state.busy) el.thread.scrollTop = el.thread.scrollHeight;
+  }
+
+  let ticker = null;
+  function renderBusy() {
+    el.send.disabled = !!state.busy;
+    el.cancel.hidden = !state.busy;
+    clearInterval(ticker);
+    if (state.busy) {
+      ticker = setInterval(() => {
+        const t = document.getElementById("pending-text");
+        if (t && state.busy) t.textContent = `Gemini está respondiendo… ${Math.round((Date.now() - state.busy.started) / 1000)} s`;
+      }, 1000);
+    }
+  }
+
+  // ---------- Ajustes ----------
+  function openSheet() {
+    el.system.value = state.settings.system;
+    state.deleteArmed = false;
+    $("btn-delete").textContent = "Eliminar esta consulta";
+    $("btn-delete").disabled = !active();
+    renderConnInfo();
+    el.sheet.hidden = false; el.backdrop.hidden = false;
+    el.system.focus();
+  }
+  function closeSheet() {
+    state.settings.system = el.system.value.trim();
+    save();
+    el.sheet.hidden = true; el.backdrop.hidden = true;
+  }
+  async function openPerms() {
+    if (!perms) return;
+    try { await perms.manage(); } catch { setConn({ message: "Abre el menú Permisos del artefacto para activar la extensión." }); return; }
+    connect();
+  }
+
+  // ---------- Eventos ----------
+  el.form.addEventListener("submit", (e) => { e.preventDefault(); submit(); });
+  el.prompt.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); submit(); }
+  });
+  el.prompt.addEventListener("input", () => { try { sessionStorage.setItem(STORE_KEY + ".draft", el.prompt.value); } catch { /* sin almacenamiento */ } });
+  el.cancel.addEventListener("click", () => state.busy?.controller.abort());
+  el.file.addEventListener("change", () => { const files = [...el.file.files]; el.file.value = ""; if (files.length) addFiles(files); });
+  el.search.addEventListener("change", () => { state.settings.search = el.search.checked; save(); });
+  el.model.addEventListener("change", () => { state.settings.model = el.model.value; save(); renderConnInfo(); });
+  $("btn-new").addEventListener("click", () => {
+    const empty = state.convs.find((c) => !c.messages.length);
+    if (empty) state.activeId = empty.id;
+    else { state.activeId = null; ensureConv(); }
+    save(); renderAll(); el.rail.classList.remove("open"); el.prompt.focus();
+  });
+  $("btn-rail").addEventListener("click", () => el.rail.classList.toggle("open"));
+  document.addEventListener("click", (e) => {
+    if (el.rail.classList.contains("open") && !el.rail.contains(e.target) && !$("btn-rail").contains(e.target)) el.rail.classList.remove("open");
+  });
+  $("btn-settings").addEventListener("click", () => { el.rail.classList.remove("open"); openSheet(); });
+  $("btn-close-sheet").addEventListener("click", closeSheet);
+  el.backdrop.addEventListener("click", closeSheet);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !el.sheet.hidden) closeSheet(); });
+  $("btn-reset-system").addEventListener("click", () => { el.system.value = DEFAULT_SYSTEM; });
+  $("btn-test").addEventListener("click", () => { connect(); });
+  $("btn-perms").addEventListener("click", openPerms);
+  $("btn-delete").addEventListener("click", () => {
+    const conv = active();
+    if (!conv) return;
+    if (!state.deleteArmed) { state.deleteArmed = true; $("btn-delete").textContent = "Confirmar: eliminar definitivamente"; return; }
+    state.convs = state.convs.filter((c) => c.id !== conv.id);
+    state.docs.delete(conv.id);
+    state.activeId = state.convs[0]?.id || null;
+    state.deleteArmed = false;
+    save(); closeSheet(); renderAll();
+  });
+
+  // ---------- Inicio ----------
+  load();
+  el.search.checked = !!state.settings.search;
+  try { el.prompt.value = sessionStorage.getItem(STORE_KEY + ".draft") || ""; } catch { /* sin almacenamiento */ }
+  renderModels();
+  renderAll();
+  boot();
+})();
+</script>
