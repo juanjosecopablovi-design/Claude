@@ -1,0 +1,8 @@
+{
+  "abogado": "Juan José Chavarriaga Ortiz",
+  "umbral_inactividad_dias": 300,
+  "vacancia": true,
+  "cierres_extra": [],
+  "festivos_adicionales": [],
+  "festivos_excluidos": []
+}
