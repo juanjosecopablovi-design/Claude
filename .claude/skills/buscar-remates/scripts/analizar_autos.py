@@ -41,7 +41,7 @@ def texto_pdf(ruta):
 # Fecha escrita: "martes seis (06) de octubre de dos mil veintiseis (2026)", "29 de septiembre de 2026"
 RE_FECHA = re.compile(
     r'(' + DIAS + r'[\s,]*)?(?:[a-z]+\s*)?\(?(\d{1,2})[°ºo]?\)?\s*(?:\(\s*\d{1,2}[°ºo]?\s*\))?\s+de\s+(' + '|'.join(MESES) +
-    r')\s+(?:de|del)\s+(?:[a-z ]+\()?\s*(\d{4})\)?')
+    r')\s+(?:(?:de|del)\s+)?(?:[a-z ]+\()?\s*(\d{4})\)?')
 RE_NUM = re.compile(r'(\d{1,2})/(\d{1,2})/(\d{4})')
 RE_HORA = re.compile(r'(\d{1,2})[:.](\d{2})\s*([ap])\.?\s*m', re.I)
 
@@ -57,7 +57,7 @@ def fechas(t):
     return out
 
 
-def extraer(t):
+def extraer(t, desde=None):
     tl = sin_tildes(t.lower())
     r = {}
     fs = fechas(tl)
@@ -98,6 +98,12 @@ def extraer(t):
             later = [(p_, f) for p_, f, w in fs if p_ > m.start()]
             if later:
                 pos, fr = later[0]
+    if not fr and desde:
+        # 5) Último recurso: la primera fecha posterior a la publicación (formatos y carteles en tabla).
+        later = [(p_, f) for p_, f, w in fs if f.isoformat() >= desde and not correo(p_)]
+        if later:
+            pos, fr = later[0]
+            r['fuente_fecha'] = 'primera fecha futura del documento: confirmar'
     r['fecha_remate'] = fr.isoformat() if fr else None
     if pos is not None:
         h = RE_HORA.search(tl, pos, pos + 200)
@@ -194,7 +200,7 @@ def main():
             if not os.path.exists(ruta) or os.path.getsize(ruta) == 0:
                 subprocess.run(['curl', '-sS', '-L', '-m', '120', '-o', ruta, d['url']], check=False)
             t, pags = texto_pdf(ruta)
-            x = extraer(t) if t else {}
+            x = extraer(t, p.get('fecha_publicacion')) if t else {}
             # Si el PDF no dice la fecha (escaneado), se intenta con el resumen de la publicación.
             if p.get('resumen') and (not x.get('fecha_remate') or x.get('tipo_doc') == 'memorial'):
                 # En el resumen, la fecha que aparece es la del remate.
