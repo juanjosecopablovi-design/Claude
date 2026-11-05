@@ -1,0 +1,620 @@
+{
+ "_nota": "Generado desde el selector de despachos de Publicaciones Procesales. Santa Elena es corregimiento de Medellín y la cubren los juzgados de Medellín. Regenerar con scripts/actualizar_despachos.js.",
+ "generado": "2026-11-05",
+ "ciudades": {
+  "medellin": {
+   "nombre": "Medellín",
+   "departamento": "05",
+   "dane": "05001",
+   "despachos": [
+    {
+     "codigo": "050013103001",
+     "nombre": "JUZGADO 001 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103002",
+     "nombre": "JUZGADO 002 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103003",
+     "nombre": "JUZGADO 003 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103004",
+     "nombre": "JUZGADO 004 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103005",
+     "nombre": "JUZGADO 005 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103006",
+     "nombre": "JUZGADO 006 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103007",
+     "nombre": "JUZGADO 007 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103008",
+     "nombre": "JUZGADO 008 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103009",
+     "nombre": "JUZGADO 009 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103010",
+     "nombre": "JUZGADO 010 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103011",
+     "nombre": "JUZGADO 011 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103012",
+     "nombre": "JUZGADO 012 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103013",
+     "nombre": "JUZGADO 013 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103014",
+     "nombre": "JUZGADO 014 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103015",
+     "nombre": "JUZGADO 015 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103016",
+     "nombre": "JUZGADO 016 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103017",
+     "nombre": "JUZGADO 017 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103018",
+     "nombre": "JUZGADO 018 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103019",
+     "nombre": "JUZGADO 019 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103020",
+     "nombre": "JUZGADO 020 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103021",
+     "nombre": "JUZGADO 021 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013103022",
+     "nombre": "JUZGADO 022 CIVIL DEL CIRCUITO DE MEDELLÍN",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "050013403000",
+     "nombre": "OFICINA APOYO JUZGADOS CIVILES CIRCUITO EJECUCIÓN SENTENCIAS MEDELLÍN",
+     "tipo": "Civil del Circuito de Ejecución"
+    },
+    {
+     "codigo": "050013403001",
+     "nombre": "JUZGADO 001 CIVIL DEL CIRCUITO DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil del Circuito de Ejecución"
+    },
+    {
+     "codigo": "050013403002",
+     "nombre": "JUZGADO 002 CIVIL DEL CIRCUITO DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil del Circuito de Ejecución"
+    },
+    {
+     "codigo": "050013403003",
+     "nombre": "JUZGADO 003 CIVIL DEL CIRCUITO DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil del Circuito de Ejecución"
+    },
+    {
+     "codigo": "050013403004",
+     "nombre": "JUZGADO 004 CIVIL DEL CIRCUITO DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil del Circuito de Ejecución"
+    },
+    {
+     "codigo": "050014003001",
+     "nombre": "JUZGADO 001 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003002",
+     "nombre": "JUZGADO 002 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003003",
+     "nombre": "JUZGADO 003 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003004",
+     "nombre": "JUZGADO 004 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003005",
+     "nombre": "JUZGADO 005 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003006",
+     "nombre": "JUZGADO 006 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003007",
+     "nombre": "JUZGADO 007 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003008",
+     "nombre": "JUZGADO 008 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003009",
+     "nombre": "JUZGADO 009 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003010",
+     "nombre": "JUZGADO 010 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003011",
+     "nombre": "JUZGADO 011 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003012",
+     "nombre": "JUZGADO 012 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003013",
+     "nombre": "JUZGADO 013 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003014",
+     "nombre": "JUZGADO 014 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003015",
+     "nombre": "JUZGADO 015 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003016",
+     "nombre": "JUZGADO 016 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003017",
+     "nombre": "JUZGADO 017 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003018",
+     "nombre": "JUZGADO 018 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003019",
+     "nombre": "JUZGADO 019 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003020",
+     "nombre": "JUZGADO 020 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003021",
+     "nombre": "JUZGADO 021 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003022",
+     "nombre": "JUZGADO 022 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003023",
+     "nombre": "JUZGADO 023 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003024",
+     "nombre": "JUZGADO 024 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003025",
+     "nombre": "JUZGADO 025 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003026",
+     "nombre": "JUZGADO 026 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003027",
+     "nombre": "JUZGADO 027 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003028",
+     "nombre": "JUZGADO 028 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003029",
+     "nombre": "JUZGADO 029 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003032",
+     "nombre": "JUZGADO 032 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003033",
+     "nombre": "JUZGADO 033 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003034",
+     "nombre": "JUZGADO 034 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003035",
+     "nombre": "JUZGADO 035 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003036",
+     "nombre": "JUZGADO 036 CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003801",
+     "nombre": "JUZGADO 801 CIVIL MUNICIPAL TRANSITORIO DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003803",
+     "nombre": "JUZGADO 803 CIVIL MUNICIPAL TRANSITORIO DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014003804",
+     "nombre": "JUZGADO 804 CIVIL MUNICIPAL TRANSITORIO DE MEDELLÍN",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "050014189001",
+     "nombre": "JUZGADO 001 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189002",
+     "nombre": "JUZGADO 002 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189003",
+     "nombre": "JUZGADO 003 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189004",
+     "nombre": "JUZGADO 004 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189005",
+     "nombre": "JUZGADO 005 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189006",
+     "nombre": "JUZGADO 006 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189007",
+     "nombre": "JUZGADO 007 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189008",
+     "nombre": "JUZGADO 008 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189009",
+     "nombre": "JUZGADO 009 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189010",
+     "nombre": "JUZGADO 010 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014189011",
+     "nombre": "JUZGADO 011 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE MEDELLÍN",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "050014303000",
+     "nombre": "OFICINA DE APOYO PARA LOS JUZGADOS DE EJECUCION CIVIL MUNICIPAL DE MEDELLIN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303001",
+     "nombre": "JUZGADO 001 CIVIL MUNICIPAL DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303002",
+     "nombre": "JUZGADO 002 DE EJECUCIÓN CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303003",
+     "nombre": "JUZGADO 003 DE EJECUCIÓN CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303004",
+     "nombre": "JUZGADO 004 DE EJECUCIÓN CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303005",
+     "nombre": "JUZGADO 005 CIVIL MUNICIPAL DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303006",
+     "nombre": "JUZGADO 006 DE EJECUCIÓN CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303007",
+     "nombre": "JUZGADO 007 DE EJECUCIÓN CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303008",
+     "nombre": "JUZGADO 008 CIVIL MUNICIPAL DE EJECUCIÓN CIVIL DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303009",
+     "nombre": "JUZGADO 009 DE EJECUCIÓN CIVIL MUNICIPAL DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    },
+    {
+     "codigo": "050014303010",
+     "nombre": "JUZGADO 010 CIVIL MUNICIPAL DE EJECUCIÓN DE SENTENCIAS DE MEDELLÍN",
+     "tipo": "Civil Municipal de Ejecución"
+    }
+   ]
+  },
+  "rionegro": {
+   "nombre": "Rionegro",
+   "departamento": "05",
+   "dane": "05615",
+   "despachos": [
+    {
+     "codigo": "056153103001",
+     "nombre": "JUZGADO 001 CIVIL DEL CIRCUITO DE RIONEGRO - ANTIOQUIA",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "056153103002",
+     "nombre": "JUZGADO 002 CIVIL DEL CIRCUITO DE RIONEGRO - ANTIOQUIA",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "056154003002",
+     "nombre": "JUZGADO 002 CIVIL MUNICIPAL DE RIONEGRO - ANTIOQUIA",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "056154003003",
+     "nombre": "JUZGADO 003 CIVIL MUNICIPAL DE RIONEGRO",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "056157172000",
+     "nombre": "CENTRO DE SERVICIOS JUDICIALES DE RIONEGRO - ANTIOQUIA",
+     "tipo": "Centro de Servicios"
+    }
+   ]
+  },
+  "sabaneta": {
+   "nombre": "Sabaneta",
+   "departamento": "05",
+   "dane": "05631",
+   "despachos": [
+    {
+     "codigo": "056314003001",
+     "nombre": "JUZGADO 001 CIVIL MUNICIPAL DE SABANETA",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "056314003002",
+     "nombre": "JUZGADO 002 CIVIL MUNICIPAL DE SABANETA",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "056314003003",
+     "nombre": "JUZGADO 003 CIVIL MUNICIPAL DE SABANETA",
+     "tipo": "Civil Municipal"
+    }
+   ]
+  },
+  "barbosa": {
+   "nombre": "Barbosa",
+   "departamento": "05",
+   "dane": "05079",
+   "despachos": [
+    {
+     "codigo": "050794089001",
+     "nombre": "JUZGADO 001 PROMISCUO MUNICIPAL DE BARBOSA - ANTIOQUIA",
+     "tipo": "Promiscuo Municipal"
+    },
+    {
+     "codigo": "050794089002",
+     "nombre": "JUZGADO 002 PROMISCUO MUNICIPAL DE BARBOSA - ANTIOQUIA",
+     "tipo": "Promiscuo Municipal"
+    }
+   ]
+  },
+  "envigado": {
+   "nombre": "Envigado",
+   "departamento": "05",
+   "dane": "05266",
+   "despachos": [
+    {
+     "codigo": "052663103001",
+     "nombre": "JUZGADO 001 CIVIL DEL CIRCUITO DE ENVIGADO",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "052663103002",
+     "nombre": "JUZGADO 002 CIVIL DEL CIRCUITO DE ENVIGADO",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "052663103003",
+     "nombre": "JUZGADO 003 CIVIL DEL CIRCUITO DE ENVIGADO",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "052664003001",
+     "nombre": "JUZGADO 001 CIVIL MUNICIPAL DE ENVIGADO",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "052664003002",
+     "nombre": "JUZGADO 002 CIVIL MUNICIPAL DE ENVIGADO",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "052664003003",
+     "nombre": "JUZGADO 003 CIVIL MUNICIPAL DE ENVIGADO",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "052664003004",
+     "nombre": "JUZGADO 004 CIVIL MUNICIPAL DE ENVIGADO",
+     "tipo": "Civil Municipal"
+    },
+    {
+     "codigo": "052664189001",
+     "nombre": "JUZGADO 001 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE ENVIGADO",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "052664189002",
+     "nombre": "JUZGADO 002 DE PEQUEÑAS CAUSAS Y COMPETENCIA MÚLTIPLE DE ENVIGADO",
+     "tipo": "Pequeñas Causas y Competencia Múltiple"
+    },
+    {
+     "codigo": "052667040000",
+     "nombre": "CENTRO DE SERVICIOS ADMINISTRATIVOS DE ENVIGADO",
+     "tipo": "Centro de Servicios"
+    }
+   ]
+  },
+  "la-estrella": {
+   "nombre": "La Estrella",
+   "departamento": "05",
+   "dane": "05380",
+   "despachos": [
+    {
+     "codigo": "053804089001",
+     "nombre": "JUZGADO 001 PROMISCUO MUNICIPAL DE LA ESTRELLA",
+     "tipo": "Promiscuo Municipal"
+    },
+    {
+     "codigo": "053804089002",
+     "nombre": "JUZGADO 002 PROMISCUO MUNICIPAL DE LA ESTRELLA",
+     "tipo": "Promiscuo Municipal"
+    },
+    {
+     "codigo": "053804089003",
+     "nombre": "JUZGADO 003 PROMISCUO MUNICIPAL DE LA ESTRELLA",
+     "tipo": "Promiscuo Municipal"
+    }
+   ]
+  },
+  "puerto-boyaca": {
+   "nombre": "Puerto Boyacá",
+   "departamento": "15",
+   "dane": "15572",
+   "despachos": [
+    {
+     "codigo": "155723112001",
+     "nombre": "JUZGADO 001 CIVIL DEL CIRCUITO DE PUERTO BOYACÁ",
+     "tipo": "Civil del Circuito"
+    },
+    {
+     "codigo": "155724089001",
+     "nombre": "JUZGADO 001 PROMISCUO MUNICIPAL DE PUERTO BOYACÁ",
+     "tipo": "Promiscuo Municipal"
+    },
+    {
+     "codigo": "155724089002",
+     "nombre": "JUZGADO 002 PROMISCUO MUNICIPAL DE PUERTO BOYACÁ",
+     "tipo": "Promiscuo Municipal"
+    },
+    {
+     "codigo": "155724089003",
+     "nombre": "JUZGADO 003 PROMISCUO MUNICIPAL DE PUERTO BOYACÁ",
+     "tipo": "Promiscuo Municipal"
+    }
+   ]
+  }
+ }
+}
